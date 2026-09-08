@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كم يكلف؟</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Arial,Tahoma,sans-serif;
+}
+
+body{
+  margin:0;
+  background:#f4f7fb;
+  color:#172033;
+}
+
+header{
+  background:linear-gradient(135deg,#0a7cff,#0057c8);
+  color:white;
+  padding:28px 18px 35px;
+  text-align:center;
+  border-radius:0 0 28px 28px;
+}
+
+.logo{
+  font-size:34px;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+.tagline{
+  font-size:16px;
+  opacity:.95;
+}
+
+.container{
+  max-width:720px;
+  margin:-18px auto 40px;
+  padding:0 14px;
+}
+
+.card{
+  background:white;
+  padding:18px;
+  margin-bottom:14px;
+  border-radius:18px;
+  box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+.title{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  margin-bottom:6px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+select,input{
+  width:100%;
+  padding:13px;
+  border:1px solid #d6dce5;
+  border-radius:12px;
+  font-size:16px;
+  background:white;
+  outline:none;
+}
+
+select:focus,input:focus{
+  border-color:#0a7cff;
+}
+
+button{
+  width:100%;
+  border:0;
+  border-radius:13px;
+  padding:14px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:12px;
+}
+
+.primary{
+  background:#0a7cff;
+  color:white;
+}
+
+.secondary{
+  background:#eef5ff;
+  color:#0868d9;
+}
+
+.green{
+  background:#159957;
+  color:white;
+}
+
+.result{
+  display:none;
+}
+
+.priceBox{
+  text-align:center;
+  background:#eef7ff;
+  padding:20px;
+  border-radius:16px;
+  margin-top:10px;
+}
+
+.price{
+  font-size:34px;
+  font-weight:bold;
+  color:#006ce0;
+  margin:7px 0;
+}
+
+.small{
+  font-size:13px;
+  color:#657085;
+  line-height:1.7;
+}
+
+.infoGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:13px;
+}
+
+.info{
+  background:#f7f9fc;
+  padding:12px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.info strong{
+  display:block;
+  font-size:17px;
+  margin-top:4px;
+}
+
+.good{
+  color:#14864a;
+}
+
+.warn{
+  color:#d17900;
+}
+
+.bad{
+  color:#c62828;
+}
+
+.status{
+  margin-top:12px;
+  padding:13px;
+  border-radius:12px;
+  text-align:center;
+  font-weight:bold;
+}
+
+.saved{
+  background:#eaf9f0;
+  color:#147542;
+}
+
+.notice{
+  background:#fff8e5;
+  border:1px solid #f0d98a;
+  color:#725700;
+  padding:12px;
+  border-radius:12px;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:14px;
+}
+
+footer{
+  text-align:center;
+  color:#7c8799;
+  font-size:12px;
+  padding:20px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">كم يكلف؟</div>
+  <div class="tagline">اعرف السعر المتوقع قبل أن توافق</div>
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<div class="notice">
+النسخة الحالية تجريبية. الأسعار المعروضة أولية لغرض اختبار التطبيق، وسيتم تحديثها بناءً على الأسعار الفعلية الموثقة في السوق الأردني.
+</div>
+
+<div class="title">🔍 ابحث عن سعر الخدمة</div>
+
+<label>المحافظة</label>
+<select id="city">
+<option value="">اختر المحافظة</option>
+<option>عمّان</option>
+<option>الزرقاء</option>
+<option>إربد</option>
+<option>البلقاء</option>
+</select>
+
+<label>منطقتك</label>
+<input id="area" type="text" placeholder="اكتب اسم منطقتك">
+
+<label>الفئة</label>
+<select id="category" onchange="loadServices()">
+<option value="">اختر الفئة</option>
+<option value="plumbing">سباكة</option>
+<option value="electric">كهرباء</option>
+<option value="ac">تكييف وتبريد</option>
+<option value="cars">صيانة سيارات</option>
+<option value="home">صيانة منزلية</option>
+</select>
+
+<label>الخدمة</label>
+<select id="service">
+<option value="">اختر الخدمة</option>
+</select>
+
+<button class="primary" onclick="showPrice()">اعرف السعر المتوقع</button>
+
+</div>
+
+
+<div class="card result" id="resultCard">
+
+<div class="title">💰 السعر المتوقع</div>
+
+<div class="priceBox">
+
+<div id="serviceTitle"></div>
+
+<div class="price" id="priceRange"></div>
+
+<div class="small">أجرة العمل المتوقعة — قطع الغيار غير مشمولة إلا إذا ذُكر غير ذلك</div>
+
+</div>
+
+<div class="infoGrid">
+
+<div class="info">
+درجة الثقة
+<strong id="confidence"></strong>
+</div>
+
+<div class="info">
+عدد السجلات
+<strong id="records"></strong>
+</div>
+
+<div class="info">
+آخر تحديث
+<strong id="updated"></strong>
+</div>
+
+<div class="info">
+المحافظة
+<strong id="selectedCity"></strong>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<div class="title">✅ افحص سعري</div>
+
+<div class="small">
+هل أعطاك الفني سعرًا وتريد معرفة إن كان قريبًا من السعر المتوقع؟
+</div>
+
+<label>أدخل السعر المطلوب منك بالدينار</label>
+<input id="quotedPrice" type="number" inputmode="decimal" placeholder="مثال: 25">
+
+<button class="secondary" onclick="checkMyPrice()">افحص سعري</button>
+
+<div id="checkResult"></div>
+
+</div>
+
+
+<div class="card">
+
+<div class="title">➕ أضف سعرك</div>
+
+<div class="small">
+ساعدنا في تحسين دقة الأسعار بإضافة السعر الذي دفعته فعلًا.
+</div>
+
+<label>السعر الذي دفعته بالدينار</label>
+<input id="paidPrice" type="number" inputmode="decimal" placeholder="مثال: 20">
+
+<button class="green" onclick="addPrice()">أضف سعرك</button>
+
+<div id="saveResult"></div>
+
+</div>
+
+
+<footer>
+كم يكلف؟ — نسخة MVP تجريبية للأردن
+</footer>
+
+</div>
+
+
+<script>
+
+const data = {
+
+plumbing:[
+{name:"فتح مجرى مغلق",min:10,max:25,confidence:82,records:31},
+{name:"تغيير خلاط مغسلة",min:8,max:18,confidence:80,records:27},
+{name:"إصلاح تسريب حنفية",min:7,max:15,confidence:84,records:35},
+{name:"تغيير عوامة خزان",min:8,max:20,confidence:78,records:19},
+{name:"تركيب سخان ماء",min:20,max:40,confidence:76,records:16},
+{name:"إصلاح تسريب أنبوب",min:12,max:30,confidence:81,records:24}
+],
+
+electric:[
+{name:"تغيير مفتاح كهرباء",min:5,max:12,confidence:84,records:29},
+{name:"تغيير بريزة كهرباء",min:5,max:12,confidence:83,records:28},
+{name:"تركيب مروحة سقف",min:15,max:30,confidence:79,records:21},
+{name:"تركيب إنارة سقف",min:8,max:20,confidence:82,records:26},
+{name:"فحص عطل كهربائي",min:10,max:25,confidence:77,records:18},
+{name:"تغيير قاطع كهربائي",min:8,max:20,confidence:80,records:23}
+],
+
+ac:[
+{name:"تنظيف مكيف سبليت",min:15,max:25,confidence:85,records:38},
+{name:"تعبئة غاز مكيف",min:20,max:45,confidence:79,records:22},
+{name:"فك وتركيب مكيف",min:35,max:65,confidence:83,records:30},
+{name:"صيانة مكيف لا يبرد",min:20,max:50,confidence:76,records:17},
+{name:"تنظيف ثلاجة وتبريد",min:15,max:30,confidence:74,records:14},
+{name:"فحص ثلاجة منزلية",min:10,max:20,confidence:81,records:25}
+],
+
+cars:[
+{name:"تغيير زيت محرك",min:5,max:12,confidence:87,records:44},
+{name:"تغيير فحمات فرامل",min:15,max:30,confidence:83,records:33},
+{name:"فحص كمبيوتر سيارة",min:5,max:15,confidence:88,records:52},
+{name:"تغيير بطارية",min:5,max:10,confidence:85,records:37},
+{name:"تبديل بواجي",min:10,max:20,confidence:81,records:26},
+{name:"إصلاح بنشر إطار",min:2,max:5,confidence:91,records:61}
+],
+
+home:[
+{name:"تركيب ستارة",min:8,max:20,confidence:78,records:20},
+{name:"تعليق تلفاز",min:10,max:25,confidence:84,records:32},
+{name:"تركيب رف جداري",min:5,max:15,confidence:80,records:24},
+{name:"إصلاح باب داخلي",min:10,max:30,confidence:75,records:17},
+{name:"تغيير قفل باب",min:8,max:20,confidence:82,records:29},
+{name:"دهان غرفة صغيرة",min:35,max:70,confidence:77,records:21}
+]
+
+};
+
+let currentService=null;
+
+function loadServices(){
+
+const category=document.getElementById("category").value;
+const serviceSelect=document.getElementById("service");
+
+serviceSelect.innerHTML='<option value="">اختر الخدمة</option>';
+
+if(!category || !data[category]) return;
+
+data[category].forEach((item,index)=>{
+const option=document.createElement("option");
+option.value=index;
+option.textContent=item.name;
+serviceSelect.appendChild(option);
+});
+
+}
+
+
+function showPrice(){
+
+const city=document.getElementById("city").value;
+const area=document.getElementById("area").value.trim();
+const category=document.getElementById("category").value;
+const serviceIndex=document.getElementById("service").value;
+
+if(!city){
+alert("اختر المحافظة أولاً");
+return;
+}
+
+if(!area){
+alert("اكتب اسم منطقتك");
+return;
+}
+
+if(!category || serviceIndex===""){
+alert("اختر الفئة والخدمة");
+return;
+}
+
+currentService=data[category][serviceIndex];
+
+document.getElementById("serviceTitle").textContent=currentService.name;
+document.getElementById("priceRange").textContent=
+currentService.min+" – "+currentService.max+" د.أ";
+
+document.getElementById("confidence").textContent=
+currentService.confidence+"%";
+
+document.getElementById("records").textContent=
+currentService.records;
+
+document.getElementById("updated").textContent=
+"سبتمبر 2026";
+
+document.getElementById("selectedCity").textContent=
+city+" - "+area;
+
+document.getElementById("resultCard").style.display="block";
+
+document.getElementById("resultCard").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+function checkMyPrice(){
+
+if(!currentService){
+alert("ابحث عن خدمة أولاً");
+return;
+}
+
+const quoted=parseFloat(document.getElementById("quotedPrice").value);
+
+if(isNaN(quoted)){
+alert("أدخل السعر الذي طلبه منك الفني");
+return;
+}
+
+let message="";
+let className="";
+
+if(quoted < currentService.min){
+
+message="السعر أقل من النطاق المتوقع. تأكد مما يشمله السعر.";
+className="warn";
+
+}else if(quoted <= currentService.max){
+
+message="✅ السعر ضمن النطاق المتوقع في التطبيق.";
+className="good";
+
+}else if(quoted <= currentService.max*1.25){
+
+message="⚠️ السعر أعلى قليلًا من النطاق المتوقع.";
+className="warn";
+
+}else{
+
+message="❌ السعر أعلى بكثير من النطاق المتوقع. يُفضّل مقارنة عرض آخر.";
+className="bad";
+
+}
+
+document.getElementById("checkResult").innerHTML=
+'<div class="status '+className+'">'+message+'</div>';
+
+}
+
+
+function addPrice(){
+
+if(!currentService){
+alert("اختر الخدمة واعرض سعرها أولاً");
+return;
+}
+
+const paid=parseFloat(document.getElementById("paidPrice").value);
+const city=document.getElementById("city").value;
+const area=document.getElementById("area").value.trim();
+
+if(isNaN(paid) || paid<=0){
+alert("أدخل السعر الذي دفعته");
+return;
+}
+
+const entry={
+service:currentService.name,
+price:paid,
+city:city,
+area:area,
+date:new Date().toISOString()
+};
+
+let savedPrices=[];
+
+try{
+savedPrices=JSON.parse(localStorage.getItem("kamYoklefPrices")) || [];
+}catch(e){
+savedPrices=[];
+}
+
+savedPrices.push(entry);
+
+localStorage.setItem(
+"kamYoklefPrices",
+JSON.stringify(savedPrices)
+);
+
+document.getElementById("saveResult").innerHTML=
+'<div class="status saved">✅ شكرًا لك. تم حفظ السعر في النسخة التجريبية على جهازك.</div>';
+
+document.getElementById("paidPrice").value="";
+
+}
+
+</script>
+
+</body>
+</html>
