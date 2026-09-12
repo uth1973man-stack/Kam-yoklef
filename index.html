@@ -508,7 +508,7 @@ await supabaseClient
 .eq("name",name)
 .limit(1);
 
-if(error) throw error;oʻ
+if(error) throw error;
 
 return rows && rows.length
 ? rows[0].id
