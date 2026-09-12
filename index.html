@@ -10,13 +10,11 @@
   box-sizing:border-box;
   font-family:Arial,Tahoma,sans-serif;
 }
-
 body{
   margin:0;
   background:#f4f7fb;
   color:#172033;
 }
-
 header{
   background:linear-gradient(135deg,#0a7cff,#0057c8);
   color:white;
@@ -24,24 +22,20 @@ header{
   text-align:center;
   border-radius:0 0 28px 28px;
 }
-
 .logo{
   font-size:34px;
   font-weight:bold;
   margin-bottom:6px;
 }
-
 .tagline{
   font-size:16px;
   opacity:.95;
 }
-
 .container{
   max-width:720px;
   margin:-18px auto 40px;
   padding:0 14px;
 }
-
 .card{
   background:white;
   padding:18px;
@@ -49,13 +43,11 @@ header{
   border-radius:18px;
   box-shadow:0 5px 20px rgba(0,0,0,.07);
 }
-
 .title{
   font-size:20px;
   font-weight:bold;
   margin-bottom:15px;
 }
-
 label{
   display:block;
   margin-top:12px;
@@ -63,7 +55,6 @@ label{
   font-weight:bold;
   font-size:14px;
 }
-
 select,input{
   width:100%;
   padding:13px;
@@ -73,11 +64,6 @@ select,input{
   background:white;
   outline:none;
 }
-
-select:focus,input:focus{
-  border-color:#0a7cff;
-}
-
 button{
   width:100%;
   border:0;
@@ -85,29 +71,23 @@ button{
   padding:14px;
   font-size:16px;
   font-weight:bold;
-  cursor:pointer;
   margin-top:12px;
 }
-
 .primary{
   background:#0a7cff;
   color:white;
 }
-
 .secondary{
   background:#eef5ff;
   color:#0868d9;
 }
-
 .green{
   background:#159957;
   color:white;
 }
-
 .result{
   display:none;
 }
-
 .priceBox{
   text-align:center;
   background:#eef7ff;
@@ -115,52 +95,37 @@ button{
   border-radius:16px;
   margin-top:10px;
 }
-
 .price{
   font-size:34px;
   font-weight:bold;
   color:#006ce0;
   margin:7px 0;
 }
-
 .small{
   font-size:13px;
   color:#657085;
   line-height:1.7;
 }
-
 .infoGrid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
   margin-top:13px;
 }
-
 .info{
   background:#f7f9fc;
   padding:12px;
   border-radius:12px;
   text-align:center;
 }
-
 .info strong{
   display:block;
   font-size:17px;
   margin-top:4px;
 }
-
-.good{
-  color:#14864a;
-}
-
-.warn{
-  color:#d17900;
-}
-
-.bad{
-  color:#c62828;
-}
-
+.good{color:#14864a}
+.warn{color:#d17900}
+.bad{color:#c62828}
 .status{
   margin-top:12px;
   padding:13px;
@@ -168,12 +133,14 @@ button{
   text-align:center;
   font-weight:bold;
 }
-
 .saved{
   background:#eaf9f0;
   color:#147542;
 }
-
+.failed{
+  background:#fff1f1;
+  color:#a52222;
+}
 .notice{
   background:#fff8e5;
   border:1px solid #f0d98a;
@@ -184,7 +151,6 @@ button{
   line-height:1.6;
   margin-bottom:14px;
 }
-
 footer{
   text-align:center;
   color:#7c8799;
@@ -206,7 +172,7 @@ footer{
 <div class="card">
 
 <div class="notice">
-النسخة الحالية تجريبية. الأسعار المعروضة أولية لغرض اختبار التطبيق، وسيتم تحديثها بناءً على الأسعار الفعلية الموثقة في السوق الأردني.
+النسخة الحالية تجريبية. الأسعار المعروضة أولية وسيتم تحسينها بالاعتماد على بيانات السوق الفعلية.
 </div>
 
 <div class="title">🔍 ابحث عن سعر الخدمة</div>
@@ -238,27 +204,25 @@ footer{
 <option value="">اختر الخدمة</option>
 </select>
 
-<button class="primary" onclick="showPrice()">اعرف السعر المتوقع</button>
+<button class="primary" onclick="showPrice()">
+اعرف السعر المتوقع
+</button>
 
 </div>
-
 
 <div class="card result" id="resultCard">
 
 <div class="title">💰 السعر المتوقع</div>
 
 <div class="priceBox">
-
 <div id="serviceTitle"></div>
-
 <div class="price" id="priceRange"></div>
-
-<div class="small">أجرة العمل المتوقعة — قطع الغيار غير مشمولة إلا إذا ذُكر غير ذلك</div>
-
+<div class="small">
+أجرة العمل المتوقعة — قطع الغيار غير مشمولة إلا إذا ذُكر غير ذلك
+</div>
 </div>
 
 <div class="infoGrid">
-
 <div class="info">
 درجة الثقة
 <strong id="confidence"></strong>
@@ -275,14 +239,12 @@ footer{
 </div>
 
 <div class="info">
-المحافظة
+الموقع
 <strong id="selectedCity"></strong>
 </div>
-
 </div>
 
 </div>
-
 
 <div class="card">
 
@@ -292,42 +254,70 @@ footer{
 هل أعطاك الفني سعرًا وتريد معرفة إن كان قريبًا من السعر المتوقع؟
 </div>
 
-<label>أدخل السعر المطلوب منك بالدينار</label>
-<input id="quotedPrice" type="number" inputmode="decimal" placeholder="مثال: 25">
+<label>السعر المطلوب منك بالدينار</label>
 
-<button class="secondary" onclick="checkMyPrice()">افحص سعري</button>
+<input
+id="quotedPrice"
+type="number"
+inputmode="decimal"
+placeholder="مثال: 25">
+
+<button class="secondary" onclick="checkMyPrice()">
+افحص سعري
+</button>
 
 <div id="checkResult"></div>
 
 </div>
-
 
 <div class="card">
 
 <div class="title">➕ أضف سعرك</div>
 
 <div class="small">
-ساعدنا في تحسين دقة الأسعار بإضافة السعر الذي دفعته فعلًا.
+ساعدنا في تحسين دقة الأسعار بإضافة السعر الذي دفعته فعليًا.
 </div>
 
 <label>السعر الذي دفعته بالدينار</label>
-<input id="paidPrice" type="number" inputmode="decimal" placeholder="مثال: 20">
 
-<button class="green" onclick="addPrice()">أضف سعرك</button>
+<input
+id="paidPrice"
+type="number"
+inputmode="decimal"
+placeholder="مثال: 20">
+
+<button
+id="addPriceBtn"
+class="green"
+onclick="addPrice()">
+أضف سعرك
+</button>
 
 <div id="saveResult"></div>
 
 </div>
 
-
 <footer>
-كم يكلف؟ — نسخة MVP تجريبية للأردن
+كم يكلف؟ — نسخة MVP للأردن
 </footer>
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
+
+const SUPABASE_URL =
+"https://kwtajmlyjoechkelvev.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
 const data = {
 
@@ -378,33 +368,48 @@ home:[
 
 };
 
-let currentService=null;
+let currentService = null;
 
 function loadServices(){
 
-const category=document.getElementById("category").value;
-const serviceSelect=document.getElementById("service");
+const category =
+document.getElementById("category").value;
 
-serviceSelect.innerHTML='<option value="">اختر الخدمة</option>';
+const serviceSelect =
+document.getElementById("service");
+
+serviceSelect.innerHTML
+  = '<option value="">اختر الخدمة</option>';
 
 if(!category || !data[category]) return;
 
 data[category].forEach((item,index)=>{
-const option=document.createElement("option");
+
+const option =
+document.createElement("option");
+
 option.value=index;
 option.textContent=item.name;
+
 serviceSelect.appendChild(option);
+
 });
 
 }
 
-
 function showPrice(){
 
-const city=document.getElementById("city").value;
-const area=document.getElementById("area").value.trim();
-const category=document.getElementById("category").value;
-const serviceIndex=document.getElementById("service").value;
+const city =
+document.getElementById("city").value;
+
+const area =
+document.getElementById("area").value.trim();
+
+const category =
+document.getElementById("category").value;
+
+const serviceIndex =
+document.getElementById("service").value;
 
 if(!city){
 alert("اختر المحافظة أولاً");
@@ -421,32 +426,34 @@ alert("اختر الفئة والخدمة");
 return;
 }
 
-currentService=data[category][serviceIndex];
+currentService =
+data[category][serviceIndex];
 
-document.getElementById("serviceTitle").textContent=currentService.name;
-document.getElementById("priceRange").textContent=
+document.getElementById("serviceTitle").textContent =
+currentService.name;
+
+document.getElementById("priceRange").textContent =
 currentService.min+" – "+currentService.max+" د.أ";
 
-document.getElementById("confidence").textContent=
+document.getElementById("confidence").textContent =
 currentService.confidence+"%";
 
-document.getElementById("records").textContent=
+document.getElementById("records").textContent =
 currentService.records;
 
-document.getElementById("updated").textContent=
+document.getElementById("updated").textContent =
 "سبتمبر 2026";
 
-document.getElementById("selectedCity").textContent=
+document.getElementById("selectedCity").textContent =
 city+" - "+area;
 
-document.getElementById("resultCard").style.display="block";
+document.getElementById("resultCard").style.display =
+"block";
 
-document.getElementById("resultCard").scrollIntoView({
-behavior:"smooth"
-});
+document.getElementById("resultCard")
+.scrollIntoView({behavior:"smooth"});
 
-}
-
+}}
 
 function checkMyPrice(){
 
@@ -455,7 +462,10 @@ alert("ابحث عن خدمة أولاً");
 return;
 }
 
-const quoted=parseFloat(document.getElementById("quotedPrice").value);
+const quoted =
+parseFloat(
+document.getElementById("quotedPrice").value
+);
 
 if(isNaN(quoted)){
 alert("أدخل السعر الذي طلبه منك الفني");
@@ -466,85 +476,236 @@ let message="";
 let className="";
 
 if(quoted < currentService.min){
-
 message="السعر أقل من النطاق المتوقع. تأكد مما يشمله السعر.";
 className="warn";
-
-}else if(quoted <= currentService.max){
-
-message="✅ السعر ضمن النطاق المتوقع في التطبيق.";
+}
+else if(quoted <= currentService.max){
+message="✅ السعر ضمن النطاق المتوقع.";
 className="good";
-
-}else if(quoted <= currentService.max*1.25){
-
+}
+else if(quoted <= currentService.max*1.25){
 message="⚠️ السعر أعلى قليلًا من النطاق المتوقع.";
 className="warn";
-
-}else{
-
-message="❌ السعر أعلى بكثير من النطاق المتوقع. يُفضّل مقارنة عرض آخر.";
+}
+else{
+message="❌ السعر أعلى بكثير من النطاق المتوقع. يفضّل مقارنة عرض آخر.";
 className="bad";
+}
+
+document.getElementById("checkResult").innerHTML =
+'<div class="status '+className+'">'+
+message+
+'</div>';
+
+}}
+
+async function findIdByName(tableName,name){
+
+const {data:rows,error} =
+await supabaseClient
+.from(tableName)
+.select("id,name")
+.eq("name",name)
+.limit(1);
+
+if(error) throw error;
+
+return rows && rows.length
+? rows[0].id
+: null;
 
 }
 
-document.getElementById("checkResult").innerHTML=
-'<div class="status '+className+'">'+message+'</div>';
-
-}
-
-
-function addPrice(){
+async function addPrice(){
 
 if(!currentService){
 alert("اختر الخدمة واعرض سعرها أولاً");
 return;
 }
 
-const paid=parseFloat(document.getElementById("paidPrice").value);
-const city=document.getElementById("city").value;
-const area=document.getElementById("area").value.trim();
+const paid =
+parseFloat(
+document.getElementById("paidPrice").value
+);
+
+const city =
+document.getElementById("city").value;
+
+const area =
+document.getElementById("area").value.trim();
 
 if(isNaN(paid) || paid<=0){
 alert("أدخل السعر الذي دفعته");
 return;
 }
 
-const entry={
+const button =
+document.getElementById("addPriceBtn");
+
+const result =
+document.getElementById("saveResult");
+
+button.disabled=true;
+button.textContent="جارٍ الحفظ...";
+result.innerHTML="";
+  try{
+
+const [
+serviceId,
+governorateId,
+areaId
+] =
+await Promise.all([
+
+findIdByName(
+"services",
+currentService.name
+),
+
+findIdByName(
+"governorates",
+city
+),
+
+findIdByName(
+"areas",
+area
+)
+
+]);
+
+if(!serviceId){
+throw new Error(
+"لم يتم العثور على الخدمة"
+);
+}
+
+if(!governorateId){
+throw new Error(
+"لم يتم العثور على المحافظة"
+);
+}
+
+const payload={
+
+service_id:serviceId,
+governorate_id:governorateId,
+labor_price:paid,
+parts_price:0,
+total_price:paid,
+
+notes:
+"أدخلها مستخدم من تطبيق كم يكلف؟ - المنطقة: "+area
+
+};
+
+if(areaId){
+payload.area_id=areaId;
+}
+    const {error} =
+await supabaseClient
+.from("price_reports")
+.insert([payload]);
+
+if(error) throw error;
+
+result.innerHTML =
+'<div class="status saved">'+
+'✅ تم إرسال السعر وحفظه في قاعدة البيانات بنجاح.'+
+'</div>';
+
+document.getElementById("paidPrice").value="";
+
+}
+catch(error){
+
+console.error(
+"Supabase error:",
+error
+);
+
+const localEntry={
+
 service:currentService.name,
 price:paid,
 city:city,
 area:area,
 date:new Date().toISOString()
+
 };
 
 let savedPrices=[];
 
 try{
-savedPrices=JSON.parse(localStorage.getItem("kamYoklefPrices")) || [];
-}catch(e){
-savedPrices=[];
+
+savedPrices =
+JSON.parse(
+localStorage.getItem("kamYoklefPrices")
+) || [];
+
 }
+catch(e){
 
-savedPrices.push(entry);
+savedPrices=[];
 
-localStorage.setItem(
-"kamYoklefPrices",
-JSON.stringify(savedPrices)
-);
+}const {error} =
+await supabaseClient
+.from("price_reports")
+.insert([payload]);
 
-document.getElementById("saveResult").innerHTML=
-'<div class="status saved">✅ شكرًا لك. تم حفظ السعر في النسخة التجريبية على جهازك.</div>';
+if(error) throw error;
+
+result.innerHTML =
+'<div class="status saved">'+
+'✅ تم إرسال السعر وحفظه في قاعدة البيانات بنجاح.'+
+'</div>';
 
 document.getElementById("paidPrice").value="";
 
 }
+catch(error){
 
+console.error(
+"Supabase error:",
+error
+);
+
+const localEntry={
+
+service:currentService.name,
+price:paid,
+city:city,
+area:area,
+date:new Date().toISOString()
+
+};
+
+let savedPrices=[];
+
+try{
+
+savedPrices =
+JSON.parse(
+localStorage.getItem("kamYoklefPrices")
+) || [];
+
+}
+catch(e){
+
+savedPrices=[];
+
+}
+    savedPrices.push(localEntry);
+localStorage.setItem("kamYoklefPrices",JSON.stringify(savedPrices));
+
+result.innerHTML=
+  '<div class="status failed">⚠️ لم يصل السعر إلى قاعدة البيانات بعد، لكنه حُفظ على جهازك. سنراجع إعداد قاعدة البيانات في الخطوة التالية.</div>';
+}finally{
+  button.disabled=false;
+  button.textContent="أضف سعرك";
+}
+}
 </script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://kwtajmlyjoechkelvev.supabase.co";
-const SUPABASE_KEY = "sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-</script>
+
 </body>
 </html>
