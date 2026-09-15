@@ -313,11 +313,9 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
 
-const supabaseClient =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+const supabaseClient = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY)
+  : null;
 
 const data = {
 
@@ -369,8 +367,23 @@ home:[
 };
 
 let currentService = null;
+let currentSelection = null;
+
+function resetSelection(){
+  currentService = null;
+  currentSelection = null;
+  document.getElementById("resultCard").style.display = "none";
+  document.getElementById("checkResult").textContent = "";
+  document.getElementById("saveResult").textContent = "";
+}
+
+["city","area","service"].forEach(id => {
+  document.getElementById(id).addEventListener("change",resetSelection);
+});
+document.getElementById("area").addEventListener("input",resetSelection);
 
 function loadServices(){
+resetSelection();
 
 const category =
 document.getElementById("category").value;
@@ -426,8 +439,12 @@ alert("اختر الفئة والخدمة");
 return;
 }
 
-currentService =
-data[category][serviceIndex];
+currentService = data[category]?.[serviceIndex];
+if(!currentService){
+  alert("اختر خدمة صحيحة");
+  return;
+}
+currentSelection = {city,area,category,serviceIndex};
 
 document.getElementById("serviceTitle").textContent =
 currentService.name;
@@ -436,13 +453,13 @@ document.getElementById("priceRange").textContent =
 currentService.min+" – "+currentService.max+" د.أ";
 
 document.getElementById("confidence").textContent =
-currentService.confidence+"%";
+"غير متوفر بعد";
 
 document.getElementById("records").textContent =
-currentService.records;
+"لا توجد سجلات موثقة";
 
 document.getElementById("updated").textContent =
-"سبتمبر 2026";
+"غير متوفر بعد";
 
 document.getElementById("selectedCity").textContent =
 city+" - "+area;
@@ -467,7 +484,7 @@ parseFloat(
 document.getElementById("quotedPrice").value
 );
 
-if(isNaN(quoted)){
+if(!Number.isFinite(quoted) || quoted <= 0){
 alert("أدخل السعر الذي طلبه منك الفني");
 return;
 }
@@ -518,7 +535,7 @@ return rows && rows.length
 
 async function addPrice(){
 
-if(!currentService){
+if(!currentService || !currentSelection){
 alert("اختر الخدمة واعرض سعرها أولاً");
 return;
 }
@@ -534,7 +551,7 @@ document.getElementById("city").value;
 const area =
 document.getElementById("area").value.trim();
 
-if(isNaN(paid) || paid<=0){
+if(!Number.isFinite(paid) || paid<=0){
 alert("أدخل السعر الذي دفعته");
 return;
 }
@@ -545,15 +562,23 @@ document.getElementById("addPriceBtn");
 const result =
 document.getElementById("saveResult");
 
+if(city !== currentSelection.city || area !== currentSelection.area ||
+   document.getElementById("category").value !== currentSelection.category ||
+   document.getElementById("service").value !== currentSelection.serviceIndex){
+  resetSelection();
+  alert("اعرض السعر بعد تحديث اختيارك");
+  return;
+}
+
 button.disabled=true;
 button.textContent="جارٍ الحفظ...";
 result.innerHTML="";
   try{
+if(!supabaseClient) throw new Error("مكتبة الاتصال بقاعدة البيانات لم تُحمّل");
 
 const [
 serviceId,
-governorateId,
-areaId
+governorateId
 ] =
 await Promise.all([
 
@@ -565,11 +590,6 @@ currentService.name
 findIdByName(
 "governorates",
 city
-),
-
-findIdByName(
-"areas",
-area
 )
 
 ]);
@@ -599,10 +619,7 @@ notes:
 
 };
 
-if(areaId){
-payload.area_id=areaId;
-}
-    const {error} =
+     const {error} =
 await supabaseClient
 .from("price_reports")
 .insert([payload]);
@@ -619,7 +636,9 @@ document.getElementById("paidPrice").value="";
 }
 catch(error){
   console.error("Supabase error:",error);
-  result.innerHTML = '<div class="status failed">تعذر إرسال السعر إلى قاعدة البيانات. حاول مرة أخرى لاحقًا.</div>';
+  const reason = error?.message || "خطأ غير معروف";
+  const safeReason = reason.replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+  result.innerHTML = '<div class="status failed">تعذر حفظ السعر: '+safeReason+'</div>';
 }finally{
   button.disabled=false;
   button.textContent="أضف سعرك";
