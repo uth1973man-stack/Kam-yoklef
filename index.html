@@ -453,7 +453,7 @@ document.getElementById("resultCard").style.display =
 document.getElementById("resultCard")
 .scrollIntoView({behavior:"smooth"});
 
-}}
+}
 
 function checkMyPrice(){
 
@@ -497,7 +497,7 @@ document.getElementById("checkResult").innerHTML =
 message+
 '</div>';
 
-}}
+}
 
 async function findIdByName(tableName,name){
 
@@ -618,88 +618,8 @@ document.getElementById("paidPrice").value="";
 
 }
 catch(error){
-
-console.error(
-"Supabase error:",
-error
-);
-
-const localEntry={
-
-service:currentService.name,
-price:paid,
-city:city,
-area:area,
-date:new Date().toISOString()
-
-};
-
-let savedPrices=[];
-
-try{
-
-savedPrices =
-JSON.parse(
-localStorage.getItem("kamYoklefPrices")
-) || [];
-
-}
-catch(e){
-
-savedPrices=[];
-
-}const {error} =
-await supabaseClient
-.from("price_reports")
-.insert([payload]);
-
-if(error) throw error;
-
-result.innerHTML =
-'<div class="status saved">'+
-'✅ تم إرسال السعر وحفظه في قاعدة البيانات بنجاح.'+
-'</div>';
-
-document.getElementById("paidPrice").value="";
-
-}
-catch(error){
-
-console.error(
-"Supabase error:",
-error
-);
-
-const localEntry={
-
-service:currentService.name,
-price:paid,
-city:city,
-area:area,
-date:new Date().toISOString()
-
-};
-
-let savedPrices=[];
-
-try{
-
-savedPrices =
-JSON.parse(
-localStorage.getItem("kamYoklefPrices")
-) || [];
-
-}
-catch(e){
-
-savedPrices=[];
-
-}
-    savedPrices.push(localEntry);
-localStorage.setItem("kamYoklefPrices",JSON.stringify(savedPrices));
-
-result.innerHTML=
-  '<div class="status failed">⚠️ لم يصل السعر إلى قاعدة البيانات بعد، لكنه حُفظ على جهازك. سنراجع إعداد قاعدة البيانات في الخطوة التالية.</div>';
+  console.error("Supabase error:",error);
+  result.innerHTML = '<div class="status failed">تعذر إرسال السعر إلى قاعدة البيانات. حاول مرة أخرى لاحقًا.</div>';
 }finally{
   button.disabled=false;
   button.textContent="أضف سعرك";
