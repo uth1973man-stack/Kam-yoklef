@@ -194,9 +194,9 @@ footer{
 <option value="">اختر الفئة</option>
 <option value="plumbing">سباكة</option>
 <option value="electric">كهرباء</option>
-<option value="ac">تكييف وتبريد</option>
+<option value="appliances">الأجهزة المنزلية</option>
 <option value="cars">صيانة سيارات</option>
-<option value="home">صيانة منزلية</option>
+<option value="home">المنزل والصيانة</option>
 </select>
 
 <label>الخدمة</label>
@@ -318,54 +318,47 @@ const supabaseClient = window.supabase?.createClient
   : null;
 
 const data = {
-
-plumbing:[
-{name:"فتح مجرى مغلق",min:10,max:25,confidence:82,records:31},
-{name:"تغيير خلاط مغسلة",min:8,max:18,confidence:80,records:27},
-{name:"إصلاح تسريب حنفية",min:7,max:15,confidence:84,records:35},
-{name:"تغيير عوامة خزان",min:8,max:20,confidence:78,records:19},
-{name:"تركيب سخان ماء",min:20,max:40,confidence:76,records:16},
-{name:"إصلاح تسريب أنبوب",min:12,max:30,confidence:81,records:24}
-],
-
-electric:[
-{name:"تغيير مفتاح كهرباء",min:5,max:12,confidence:84,records:29},
-{name:"تغيير بريزة كهرباء",min:5,max:12,confidence:83,records:28},
-{name:"تركيب مروحة سقف",min:15,max:30,confidence:79,records:21},
-{name:"تركيب إنارة سقف",min:8,max:20,confidence:82,records:26},
-{name:"فحص عطل كهربائي",min:10,max:25,confidence:77,records:18},
-{name:"تغيير قاطع كهربائي",min:8,max:20,confidence:80,records:23}
-],
-
-ac:[
-{name:"تنظيف مكيف سبليت",min:15,max:25,confidence:85,records:38},
-{name:"تعبئة غاز مكيف",min:20,max:45,confidence:79,records:22},
-{name:"فك وتركيب مكيف",min:35,max:65,confidence:83,records:30},
-{name:"صيانة مكيف لا يبرد",min:20,max:50,confidence:76,records:17},
-{name:"تنظيف ثلاجة وتبريد",min:15,max:30,confidence:74,records:14},
-{name:"فحص ثلاجة منزلية",min:10,max:20,confidence:81,records:25}
-],
-
 cars:[
-{name:"تغيير زيت محرك",min:5,max:12,confidence:87,records:44},
-{name:"تغيير فحمات فرامل",min:15,max:30,confidence:83,records:33},
-{name:"فحص كمبيوتر سيارة",min:5,max:15,confidence:88,records:52},
-{name:"تغيير بطارية",min:5,max:10,confidence:85,records:37},
-{name:"تبديل بواجي",min:10,max:20,confidence:81,records:26},
-{name:"إصلاح بنشر إطار",min:2,max:5,confidence:91,records:61}
+{name:"تغيير زيت المحرك",min:5,max:12},
+{name:"تبديل بطارية",min:5,max:10},
+{name:"تغيير فحمات فرامل",min:15,max:30},
+{name:"إصلاح بنشر إطار",min:2,max:5},
+{name:"تعبئة غاز مكيف السيارة",min:null,max:null},
+{name:"فحص كمبيوتر للسيارة",min:5,max:15}
 ],
-
 home:[
-{name:"تركيب ستارة",min:8,max:20,confidence:78,records:20},
-{name:"تعليق تلفاز",min:10,max:25,confidence:84,records:32},
-{name:"تركيب رف جداري",min:5,max:15,confidence:80,records:24},
-{name:"إصلاح باب داخلي",min:10,max:30,confidence:75,records:17},
-{name:"تغيير قفل باب",min:8,max:20,confidence:82,records:29},
-{name:"دهان غرفة صغيرة",min:35,max:70,confidence:77,records:21}
+{name:"دهان غرفة",min:35,max:70},
+{name:"تركيب باب",min:null,max:null},
+{name:"تصليح قفل باب",min:null,max:null},
+{name:"تركيب ستارة",min:8,max:20},
+{name:"تركيب رفوف",min:5,max:15},
+{name:"صيانة عامة منزلية",min:null,max:null}
+],
+electric:[
+{name:"تركيب مفتاح كهرباء",min:5,max:12},
+{name:"تركيب بريزة كهرباء",min:5,max:12},
+{name:"تبديل قاطع كهربائي",min:8,max:20},
+{name:"تركيب إنارة",min:8,max:20},
+{name:"كشف عطل كهربائي",min:10,max:25},
+{name:"تمديد نقطة كهرباء جديدة",min:null,max:null}
+],
+plumbing:[
+{name:"تصليح تسريب مياه",min:12,max:30},
+{name:"تغيير خلاط مياه",min:8,max:18},
+{name:"تسليك مجاري",min:10,max:25},
+{name:"تركيب مغسلة",min:null,max:null},
+{name:"تغيير عوامة خزان",min:8,max:20},
+{name:"تركيب سخان مياه",min:20,max:40}
+],
+appliances:[
+{name:"صيانة غسالة",min:null,max:null},
+{name:"صيانة ثلاجة",min:null,max:null},
+{name:"صيانة مكيف",min:20,max:50},
+{name:"تنظيف مكيف",min:15,max:25},
+{name:"صيانة فرن غاز",min:null,max:null},
+{name:"صيانة نشافة ملابس",min:null,max:null}
 ]
-
 };
-
 let currentService = null;
 let currentSelection = null;
 
@@ -450,6 +443,7 @@ document.getElementById("serviceTitle").textContent =
 currentService.name;
 
 document.getElementById("priceRange").textContent =
+currentService.min === null ? "لم تتوفر تقديرات بعد" :
 currentService.min+" – "+currentService.max+" د.أ";
 
 document.getElementById("confidence").textContent =
@@ -477,6 +471,11 @@ function checkMyPrice(){
 if(!currentService){
 alert("ابحث عن خدمة أولاً");
 return;
+}
+
+if(currentService.min === null){
+  alert("لا تتوفر تقديرات لهذه الخدمة بعد. يمكنك إضافة السعر الذي دفعته.");
+  return;
 }
 
 const quoted =
