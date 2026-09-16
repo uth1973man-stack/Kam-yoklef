@@ -515,20 +515,34 @@ message+
 
 }
 
+function normalizeArabic(value){
+return String(value || "")
+.normalize("NFKD")
+.replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g,"")
+.replace(/[أإآٱ]/g,"ا")
+.replace(/ى/g,"ي")
+.replace(/ؤ/g,"و")
+.replace(/ئ/g,"ي")
+.replace(/ـ/g,"")
+.replace(/\s+/g," ")
+.trim();
+}
+
 async function findIdByName(tableName,name){
 
 const {data:rows,error} =
 await supabaseClient
 .from(tableName)
-.select("id,name")
-.eq("name",name)
-.limit(1);
+.select("id,name");
 
 if(error) throw error;
 
-return rows && rows.length
-? rows[0].id
-: null;
+const wanted = normalizeArabic(name);
+const matched = (rows || []).find(row =>
+normalizeArabic(row.name) === wanted
+);
+
+return matched ? matched.id : null;
 
 }
 
