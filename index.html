@@ -403,7 +403,7 @@ serviceSelect.appendChild(option);
 
 }
 
-function showPrice(){
+async function showPrice(){
 
 const city =
 document.getElementById("city").value;
@@ -447,13 +447,13 @@ currentService.min === null ? "لم تتوفر تقديرات بعد" :
 currentService.min+" – "+currentService.max+" د.أ";
 
 document.getElementById("confidence").textContent =
-"غير متوفر بعد";
+"سعر أولي";
 
 document.getElementById("records").textContent =
-"لا توجد سجلات موثقة";
+"0 سجل معتمد";
 
 document.getElementById("updated").textContent =
-"غير متوفر بعد";
+"بانتظار بيانات السوق";
 
 document.getElementById("selectedCity").textContent =
 city+" - "+area;
@@ -463,6 +463,45 @@ document.getElementById("resultCard").style.display =
 
 document.getElementById("resultCard")
 .scrollIntoView({behavior:"smooth"});
+
+if(!supabaseClient) return;
+
+try{
+  const {data:estimate,error} = await supabaseClient
+  .rpc("get_price_estimate",{
+    p_service_name:currentService.name,
+    p_governorate_name:city
+  })
+  .single();
+
+  if(error) throw error;
+
+  const count = Number(estimate?.record_count || 0);
+  document.getElementById("records").textContent =
+  count+" سجل معتمد";
+
+  if(count >= 3 && estimate.min_price !== null && estimate.max_price !== null){
+    currentService = {
+      ...currentService,
+      min:Number(estimate.min_price),
+      max:Number(estimate.max_price)
+    };
+
+    document.getElementById("priceRange").textContent =
+    currentService.min+" – "+currentService.max+" د.أ";
+
+    document.getElementById("confidence").textContent =
+    estimate.confidence_score+"%";
+
+    document.getElementById("updated").textContent =
+    estimate.last_updated
+    ? new Date(estimate.last_updated).toLocaleDateString("ar-JO")
+    : "غير متوفر";
+  }
+}
+catch(error){
+  console.error("Price estimate error:",error);
+}
 
 }
 
