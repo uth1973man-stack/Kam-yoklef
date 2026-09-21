@@ -14,7 +14,7 @@
 <h2>دخول المدير</h2>
 <p class="muted">الدخول متاح فقط للبريد المعتمد. سنرسل رابط دخول آمن إلى بريدك.</p>
 <label>البريد المعتمد</label>
-<input id="email" type="email" value="Uthman1973@gmail.com" readonly>
+<input id="email" type="email" value="Uth1973man@gmail.com" readonly>
 <button id="sendBtn" onclick="sendLink()">إرسال رابط الدخول</button>
 <div id="loginMsg"></div>
 </section>
@@ -33,7 +33,7 @@
 const SUPABASE_URL="https://kvwtajmlyjoechkelvev.supabase.co";
 const SUPABASE_KEY="sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const ADMIN_EMAIL="uthman1973@gmail.com";
+const ADMIN_EMAIL="uth1973man@gmail.com";
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 async function sendLink(){
  const btn=document.getElementById("sendBtn"),box=document.getElementById("loginMsg");
