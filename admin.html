@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>إدارة كم يكلف؟</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;color:#172033;font-family:Tahoma,Arial,sans-serif}header{background:linear-gradient(135deg,#075fc7,#0a86ea);color:#fff;padding:22px 16px;text-align:center}.wrap{max-width:780px;margin:auto;padding:16px}.card{background:#fff;border-radius:16px;padding:18px;margin:14px 0;box-shadow:0 5px 20px #183b6414}h1,h2{margin:0 0 12px}label{display:block;margin:10px 0 6px;font-weight:bold}input,select,button{width:100%;padding:13px;border-radius:11px;border:1px solid #ced8e5;font-size:16px}button{border:0;background:#0877db;color:#fff;font-weight:bold;margin-top:10px;cursor:pointer}.danger{background:#bd2c36}.ok{background:#14864a}.muted{color:#66758a;font-size:13px;line-height:1.7}.msg{padding:12px;border-radius:10px;margin-top:10px;background:#eef5ff}.report{border:1px solid #e2e8f0;border-radius:13px;padding:14px;margin:12px 0}.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.price{font-size:21px;color:#075fc7;font-weight:bold}.hidden{display:none}.top{display:flex;gap:8px}.top button{width:auto;flex:1}@media(max-width:520px){.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>إدارة «كم يكلف؟»</h1><div>مراجعة الأسعار المرسلة</div></header>
+<div class="wrap">
+<section id="loginCard" class="card">
+<h2>دخول المدير</h2>
+<p class="muted">الدخول متاح فقط للبريد المعتمد. سنرسل رابط دخول آمن إلى بريدك.</p>
+<label>البريد المعتمد</label>
+<input id="email" type="email" value="Uthman1973@gmail.com" readonly>
+<button id="sendBtn" onclick="sendLink()">إرسال رابط الدخول</button>
+<div id="loginMsg"></div>
+</section>
+<section id="adminCard" class="hidden">
+<div class="card">
+<div class="top"><button onclick="loadReports()">تحديث السجلات</button><button class="danger" onclick="logout()">تسجيل الخروج</button></div>
+<label>عرض السجلات</label>
+<select id="filter" onchange="loadReports()"><option value="pending">بانتظار المراجعة</option><option value="approved">المعتمدة</option><option value="rejected">المرفوضة</option><option value="all">الكل</option></select>
+<div id="statusMsg" class="msg">جارٍ تحميل السجلات…</div>
+</div>
+<div id="reports"></div>
+</section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://kvwtajmlyjoechkelvev.supabase.co";
+const SUPABASE_KEY="sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const ADMIN_EMAIL="uthman1973@gmail.com";
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+async function sendLink(){
+ const btn=document.getElementById("sendBtn"),box=document.getElementById("loginMsg");
+ btn.disabled=true;box.innerHTML='<div class="msg">جارٍ الإرسال…</div>';
+ const {error}=await db.auth.signInWithOtp({email:ADMIN_EMAIL,options:{emailRedirectTo:location.href,shouldCreateUser:true}});
+ box.innerHTML='<div class="msg">'+(error?"تعذر الإرسال: "+esc(error.message):"تم الإرسال. افتح بريدك واضغط رابط الدخول ثم عد إلى هذه الصفحة.")+'</div>';
+ btn.disabled=false;
+}
+async function start(){
+ const {data:{session}}=await db.auth.getSession();
+ if(!session){document.getElementById("loginCard").classList.remove("hidden");return}
+ const email=(session.user.email||"").toLowerCase();
+ if(email!==ADMIN_EMAIL){await db.auth.signOut();document.getElementById("loginMsg").innerHTML='<div class="msg">هذا البريد غير مخوّل بالإدارة.</div>';return}
+ document.getElementById("loginCard").classList.add("hidden");document.getElementById("adminCard").classList.remove("hidden");loadReports();
+}
+async function loadReports(){
+ const filter=document.getElementById("filter").value,box=document.getElementById("reports"),msg=document.getElementById("statusMsg");
+ msg.textContent="جارٍ تحميل السجلات…";box.innerHTML="";
+ const {data,error}=await db.rpc("admin_list_price_reports",{p_status:filter});
+ if(error){msg.textContent="تعذر التحميل: "+error.message;return}
+ msg.textContent=data.length?("عدد السجلات: "+data.length):"لا توجد سجلات في هذا القسم.";
+ box.innerHTML=data.map(r=>'<article class="card report"><h2>'+esc(r.service_name)+'</h2><div class="muted">'+esc(r.governorate_name)+(r.area_name?' — '+esc(r.area_name):'')+'</div><p class="price">'+esc(r.total_price)+' د.أ</p><div class="row"><div>أجرة العمل: <b>'+esc(r.labor_price)+'</b></div><div>القطع: <b>'+esc(r.parts_price)+'</b></div></div><p>ملاحظات: '+(esc(r.notes)||'لا يوجد')+'</p><p class="muted">آخر 4 أرقام: '+(esc(r.phone_last4)||'غير متاح')+'<br>'+new Date(r.created_at).toLocaleString('ar-JO')+'</p>'+(r.status==='pending'?'<div class="row"><button class="ok" onclick="review('+r.id+',\'approved\')">اعتماد</button><button class="danger" onclick="review('+r.id+',\'rejected\')">رفض</button></div>':'')+'</article>').join('');
+}
+async function review(id,status){
+ const label=status==="approved"?"اعتماد":"رفض";if(!confirm("تأكيد "+label+" هذا السعر؟"))return;
+ const {data,error}=await db.rpc("admin_review_price_report",{p_report_id:id,p_new_status:status});
+ if(error||!data){alert("لم يتم التحديث: "+(error?error.message:"السجل عولج مسبقًا"));return}await loadReports();
+}
+async function logout(){await db.auth.signOut();location.reload()}
+db.auth.onAuthStateChange(()=>setTimeout(start,0));start();
+</script>
+</body></html>
