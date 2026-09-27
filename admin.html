@@ -12,9 +12,9 @@
 <div class="wrap">
 <section id="loginCard" class="card">
 <h2>دخول المدير</h2>
-<p class="muted">الدخول متاح فقط للبريد المعتمد. سنرسل رابط دخول آمن إلى بريدك.</p>
+<p class="muted">أدخل بريد الإدارة المعتمد. لن يظهر البريد داخل كود الصفحة العام، والتحقق النهائي يتم من الخادم.</p>
 <label>البريد المعتمد</label>
-<input id="email" type="email" value="Uth1973man@gmail.com" readonly>
+<input id="email" type="email" autocomplete="email" placeholder="اكتب بريد الإدارة">
 <button id="sendBtn" onclick="sendLink()">إرسال رابط الدخول</button>
 <div id="loginMsg"></div>
 </section>
@@ -33,34 +33,32 @@
 const SUPABASE_URL="https://kvwtajmlyjoechkelvev.supabase.co";
 const SUPABASE_KEY="sb_publishable_3XGb_HhHN-6poabMn7hUGQ_y7p0sfD0";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const ADMIN_EMAIL="uth1973man@gmail.com";
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 async function sendLink(){
- const btn=document.getElementById("sendBtn"),box=document.getElementById("loginMsg");
+ const btn=document.getElementById("sendBtn"),box=document.getElementById("loginMsg"),email=document.getElementById("email").value.trim().toLowerCase();
+ if(!email){box.innerHTML='<div class="msg">اكتب بريد الإدارة أولاً.</div>';return}
  btn.disabled=true;box.innerHTML='<div class="msg">جارٍ الإرسال…</div>';
- const {error}=await db.auth.signInWithOtp({email:ADMIN_EMAIL,options:{emailRedirectTo:location.href,shouldCreateUser:true}});
- box.innerHTML='<div class="msg">'+(error?"تعذر الإرسال: "+esc(error.message):"تم الإرسال. افتح بريدك واضغط رابط الدخول ثم عد إلى هذه الصفحة.")+'</div>';
+ const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:location.href,shouldCreateUser:true}});
+ box.innerHTML='<div class="msg">'+(error?"تعذر الإرسال: "+esc(error.message):"إذا كان البريد مخوّلًا، افتح الرسالة واضغط رابط الدخول ثم عد إلى هذه الصفحة.")+'</div>';
  btn.disabled=false;
 }
 async function start(){
  const {data:{session}}=await db.auth.getSession();
  if(!session){document.getElementById("loginCard").classList.remove("hidden");return}
- const email=(session.user.email||"").toLowerCase();
- if(email!==ADMIN_EMAIL){await db.auth.signOut();document.getElementById("loginMsg").innerHTML='<div class="msg">هذا البريد غير مخوّل بالإدارة.</div>';return}
  document.getElementById("loginCard").classList.add("hidden");document.getElementById("adminCard").classList.remove("hidden");loadReports();
 }
 async function loadReports(){
  const filter=document.getElementById("filter").value,box=document.getElementById("reports"),msg=document.getElementById("statusMsg");
  msg.textContent="جارٍ تحميل السجلات…";box.innerHTML="";
  const {data,error}=await db.rpc("admin_list_price_reports",{p_status:filter});
- if(error){msg.textContent="تعذر التحميل: "+error.message;return}
+ if(error){msg.textContent="تعذر التحميل أو أن الحساب غير مخوّل.";return}
  msg.textContent=data.length?("عدد السجلات: "+data.length):"لا توجد سجلات في هذا القسم.";
- box.innerHTML=data.map(r=>'<article class="card report"><h2>'+esc(r.service_name)+'</h2><div class="muted">'+esc(r.governorate_name)+(r.area_name?' — '+esc(r.area_name):'')+'</div><p class="price">'+esc(r.total_price)+' د.أ</p><div class="row"><div>أجرة العمل: <b>'+esc(r.labor_price)+'</b></div><div>القطع: <b>'+esc(r.parts_price)+'</b></div></div><p>ملاحظات: '+(esc(r.notes)||'لا يوجد')+'</p><p class="muted">آخر 4 أرقام: '+(esc(r.phone_last4)||'غير متاح')+'<br>'+new Date(r.created_at).toLocaleString('ar-JO')+'</p>'+(r.status==='pending'?'<div class="row"><button class="ok" onclick="review('+r.id+',\'approved\')">اعتماد</button><button class="danger" onclick="review('+r.id+',\'rejected\')">رفض</button></div>':'')+'</article>').join('');
+ box.innerHTML=data.map(r=>'<article class="card report"><h2>'+esc(r.service_name)+'</h2><div class="muted">'+esc(r.governorate_name)+(r.area_name?' — '+esc(r.area_name):'')+'</div><p class="price">'+esc(r.total_price)+' د.أ</p><div class="row"><div>أجرة العمل: <b>'+esc(r.labor_price)+'</b></div><div>القطع: <b>'+esc(r.parts_price)+'</b></div></div><p>ملاحظات: '+(esc(r.notes)||'لا يوجد')+'</p><p class="muted">'+new Date(r.created_at).toLocaleString('ar-JO')+'</p>'+(r.status==='pending'?'<div class="row"><button class="ok" onclick="review('+r.id+',\'approved\')">اعتماد</button><button class="danger" onclick="review('+r.id+',\'rejected\')">رفض</button></div>':'')+'</article>').join('');
 }
 async function review(id,status){
  const label=status==="approved"?"اعتماد":"رفض";if(!confirm("تأكيد "+label+" هذا السعر؟"))return;
  const {data,error}=await db.rpc("admin_review_price_report",{p_report_id:id,p_new_status:status});
- if(error||!data){alert("لم يتم التحديث: "+(error?error.message:"السجل عولج مسبقًا"));return}await loadReports();
+ if(error||!data){alert("لم يتم التحديث. تحقق من صلاحية الحساب أو من حالة السجل.");return}await loadReports();
 }
 async function logout(){await db.auth.signOut();location.reload()}
 db.auth.onAuthStateChange(()=>setTimeout(start,0));start();
